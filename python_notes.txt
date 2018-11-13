@@ -98,7 +98,10 @@ cat + 秘钥地址  查看秘钥
 git add *  提交当前目录所有文件
 git commit -m  '库名'  提交到git init 创建的库下
 git push git@github.com:752869839/github上的库名.git  上传文件到github
-git clone 项目地址
+git clone 新建git库的地址
+在终端 cd 到克隆下来的地址 把要上传的文件拉进去 git add * 添加到库里
+git commit -m 'notes'  提交
+get push 
 cd 项目地址
 vim notes.md
 git add *
@@ -132,3 +135,38 @@ git rebase master：将主分支的提交在当前分支重放一遍。
 git rebase 分支名 将分知名这个分支在当前分支重新播放一遍。
 git push --force：强制提交
 git cherry-pick commitid：将别的分支的commitid对应的提交剪切到当前分支。
+
+
+
+
+Vim编辑器常用命令
+
+1，插入模式    ESC   +   i 
+2，底行模式    ESC   +   ：
+3，命令行模式  ESC
+4,可视化模式   Shift + V
+
+单行复制：  yy
+多行复制： nyy
+粘贴：  p粘贴到光标的下一行    P 粘贴到光标的上一行
+单行剪切：dd
+多行剪切  ndd
+直接跳到文件末尾：shift + g
+直接跳到文件起始：gg
+当我们在操作出错的时候，撤销：  u
+数字0    移至本行开头
+ctrl-f/PgDn    下翻一页
+ctrl-b/PgUp    上翻一页
+nG 移至第n行
+G 移至光标最后一行
+A 在行尾插入文本
+I 在行首插入文本
+o/O 当前行上方/下方插入新行并进入插入模式
+x  删除当前字符（剪切）
+nx 向后删除当前行在内的n个字符（剪切）
+fx（当前行内查找）光标移至本行下一处出现字符x的位置，输入分号重复上一次搜索
+/ （搜索单词或短语）使用/命令后，屏幕底端会出现/，接下来输入要搜索的单词或短语，enter结束
+:set nu  显示行号
+:set nonu 取消显示行号
+:w file1  文件另存为file1
+Ctrl + n 自动提醒
