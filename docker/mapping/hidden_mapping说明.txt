@@ -1,0 +1,1 @@
+curl -XPUT "http://172.16.20.178:9200/hidden" -H 'Content-Type: application/json' -d "@./hidden.json"
