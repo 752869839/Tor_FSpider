@@ -1,0 +1,254 @@
+{
+  "settings": {
+    "number_of_replicas": 0,
+    "highlight" : {
+          "max_analyzed_offset" : "60000000"
+        },
+    "max_result_window" :"147483647",
+    "analysis": {
+      "char_filter": {
+        "quotes": {
+          "type": "mapping",
+          "mappings": [
+            "\\u0091=>\\u0027",
+            "\\u0092=>\\u0027",
+            "\\u2018=>\\u0027",
+            "\\u2019=>\\u0027",
+            "\\u201B=>\\u0027"
+          ]
+        }
+      },
+      "filter": {
+        "english_stop": {
+          "type": "stop",
+          "stopwords": "_english_"
+        },
+        "english_stemmer": {
+          "type": "stemmer",
+          "language": "english"
+        },
+        "english_possessive_stemmer": {
+          "type": "stemmer",
+          "language": "possessive_english"
+        },
+        "email": {
+          "type": "pattern_capture",
+          "preserve_original": true,
+          "patterns": [
+            "([^@]+)",
+            "(\\p{L}+)",
+            "(\\d+)",
+            "@(.+)",
+            "([^-@]+)"
+          ]
+        }
+      },
+      "analyzer": {
+        "url": {
+          "type": "custom",
+          "char_filter": [
+            "html_strip"
+          ],
+          "tokenizer": "lowercase",
+          "filter": [
+            "stop"
+          ]
+        },
+        "email": {
+          "tokenizer": "uax_url_email",
+          "filter": [
+            "email",
+            "lowercase",
+            "unique"
+          ]
+        },
+        "raw_plain": {
+          "type": "custom",
+          "char_filter": [
+            "quotes"
+          ],
+          "tokenizer": "standard",
+          "filter": [
+            "lowercase",
+            "stop"
+          ]
+        },
+        "english_plain": {
+          "type": "custom",
+          "char_filter": [
+            "quotes"
+          ],
+          "tokenizer": "standard",
+          "filter": [
+            "english_possessive_stemmer",
+            "lowercase",
+            "english_stop",
+            "english_stemmer"
+          ]
+        }
+      }
+    }
+  },
+  "mappings": {
+      "dynamic": "strict",
+      "properties": {
+
+        "url": {
+          "type": "text",
+          "analyzer": "url",
+          "fields": {
+            "raw": {
+              "type": "keyword"
+            }
+          }
+        },
+        "title": {
+          "type": "text",
+          "analyzer": "raw_plain",
+          "fields": {
+            "raw": {
+              "type": "keyword"
+            },
+            "english": {
+              "type": "text",
+              "analyzer": "english_plain"
+            },
+            "chinese": {
+              "type": "text",
+              "analyzer": "ik_max_word",
+              "search_analyzer": "ik_smart"
+            }
+          }
+        },
+        "html": {
+          "type": "text"
+        },
+        "content": {
+          "type": "text",
+          "analyzer": "raw_plain",
+          "fields": {
+            "english": {
+              "type": "text",
+              "analyzer": "english_plain"
+            },
+            "chinese": {
+              "type": "text",
+              "analyzer": "ik_max_word",
+              "search_analyzer": "ik_smart"
+            }
+          }
+        },
+        "domain": {
+          "type": "keyword"
+        },
+        "encode": {
+          "type": "keyword"
+        },
+        "language": {
+          "type": "keyword"
+        },
+        "category": {
+          "type": "keyword"
+        },
+        "topic": {
+          "type": "keyword"
+        },
+        "status": {
+          "type": "keyword"
+        },
+        "significance": {
+          "type": "keyword"
+        },
+        "net_type": {
+          "type": "keyword"
+        },
+        "pgp": {
+          "type": "text"
+        },
+        "mirror": {
+          "type": "keyword"
+        },
+        "keywords": {
+          "type": "text",
+          "analyzer": "raw_plain",
+          "fields": {
+            "raw": {
+              "type": "keyword"
+            },
+            "english": {
+              "type": "text",
+              "analyzer": "english_plain"
+            },
+            "chinese": {
+              "type": "text",
+              "analyzer": "ik_max_word",
+              "search_analyzer": "ik_smart"
+            }
+          }
+        },
+        "description": {
+          "type": "text",
+          "analyzer": "raw_plain",
+          "fields": {
+            "raw": {
+              "type": "keyword"
+            },
+            "english": {
+              "type": "text",
+              "analyzer": "english_plain"
+            },
+            "chinese": {
+              "type": "text",
+              "analyzer": "ik_max_word",
+              "search_analyzer": "ik_smart"
+            }
+          }
+        },
+        "emails": {
+          "type": "text",
+          "analyzer": "email",
+          "fields": {
+            "raw": {
+              "type": "keyword"
+            }
+          }
+        },
+        "qq": {
+          "type": "keyword"
+        },
+        "wechat_id": {
+          "type": "keyword"
+        },
+        "alipay_id": {
+          "type": "keyword"
+        },
+        "card_id": {
+          "type": "keyword"
+        },
+        "telegram_id": {
+          "type": "keyword"
+        },
+        "phone_number": {
+          "type": "keyword"
+        },
+        "bitcoin_addresses": {
+          "type": "keyword"
+        },
+        "eth_addresses": {
+          "type": "keyword"
+        },
+        "crawl_time": {
+          "type": "date",
+          "format": "date_optional_time"
+        },
+        "gmt_create": {
+          "type": "date",
+          "format": "date_optional_time"
+        },
+        "gmt_modified": {
+          "type": "date",
+          "format": "date_optional_time"
+      }
+    }
+  }
+}
