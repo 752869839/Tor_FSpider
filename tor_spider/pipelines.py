@@ -10,7 +10,7 @@ from scrapy import Request
 from scrapy.pipelines.images import ImagesPipeline,FilesPipeline
 from scrapy.pipelines.files import FSFilesStore,S3FilesStore,GCSFilesStore
 from scrapy.utils.python import to_bytes
-from Seaweedfs.stores import WeedFilesStore
+from seaweedfs.stores import WeedFilesStore
 from elasticsearch.helpers import bulk
 from tor_spider.sim_hash import p_id
 from tor_spider.settings import es_conn
