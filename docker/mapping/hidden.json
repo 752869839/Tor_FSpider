@@ -1,6 +1,7 @@
 {
   "settings": {
-    "number_of_replicas": 0,
+    "number_of_shards" : 12,
+    "number_of_replicas": 1,
     "highlight" : {
           "max_analyzed_offset" : "60000000"
         },
