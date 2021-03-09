@@ -59,33 +59,22 @@ class AlibabaLogin(object):
     def get(self):
         logger.info('开始登录:')
         r = self.session.get(self.url,headers=self.headers,proxies=self.proxies)
-        logger.info('访问登录网址:')
-        logger.info(r.status_code)
-        res = etree.HTML(r.text)
-        captcha_url = res.xpath('//img[@style="float:right"]/@src')[0].strip().replace("'",'%27')
-        logger.info('提取captcha_url:')
-        logger.info(captcha_url)
-        captcha_url = 'http://alibaba2kw6qoh6o.onion' + captcha_url
-        resp = self.session.get(captcha_url,headers=self.headers,proxies=self.proxies)
-        logger.info('访问验证码链接:')
-        logger.info(resp.status_code)
+        logger.info(f'访问登录网址,{r.status_code}')
+        html = etree.HTML(r.text)
         path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        # with open('{}/login/code/alibaba.svg'.format(path), 'w', encoding='utf-8') as f1:
-        with open('/code/login/img/alibaba.svg', 'w', encoding='utf-8') as f1:
-            f1.write(resp.text)
-            f1.close()
 
-        # cairosvg.svg2png(file_obj=open("{}/login/code/alibaba.svg".format(path), "rb"), write_to="{}/login/code/alibaba.png".format(path))
+        captcha = html.xpath('//div[@style="float:right"]/svg')[0]
+        with open('/code/login/img/alibaba.svg', 'wb') as f1:
+            f1.write(etree.tostring(captcha))
+            f1.close()
         cairosvg.svg2png(file_obj=open("/code/login/img/alibaba.svg", "rb"), write_to="/code/login/img/alibaba.png")
-        # im = open('{}/login/code/alibaba.png'.format(path), 'rb').read()
         im = open('/code/login/img/alibaba.png', 'rb').read()
         chaojiying = Chaojiying_Client()
         code = chaojiying.PostPic(im, 1004)
         global err
         err = code["pic_id"]
         result = code ["pic_str"].lower()
-        logger.info('验证码识别结果为:')
-        logger.info(result)
+        logger.info(f'验证码识别结果为:{result}')
         # if len(result) < 4:
         #     self.main()
         data = {
@@ -103,29 +92,20 @@ class AlibabaLogin(object):
         logger.info('请求提交验证码表单:')
         logger.info(response.status_code)
         if '会员登录' in response.text:
-            captcha_url = re.findall('background: url(.*?) center',response.text)[0].replace("('",'').replace("'", '%27')
-            logger.info('提取第二张验证码captcha_url:')
-            logger.info(captcha_url)
-            captcha_url = 'http://alibaba2kw6qoh6o.onion' + captcha_url
-            resp = self.session.get(captcha_url, headers=self.headers, proxies=self.proxies)
-            logger.info('请求验证码地址:')
-            logger.info(response.status_code)
+            html2 = etree.HTML(response.text)
             path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-            # with open('{}/login/code/alibaba2.svg'.format(path), 'w', encoding='utf-8') as f1:
-            with open('/code/login/img/alibaba2.svg', 'w', encoding='utf-8') as f1:
-                f1.write(resp.text)
+            captcha = html2.xpath('//div[@class="flex-end"]/label/svg')[0]
+            with open('/code/login/img/alibaba2.svg', 'wb') as f1:
+                f1.write(etree.tostring(captcha))
                 f1.close()
-            # cairosvg.svg2png(file_obj=open("{}/login/code/alibaba2.svg".format(path), "rb"),write_to="{}/login/code/alibaba2.png".format(path))
             cairosvg.svg2png(file_obj=open("/code/login/img/alibaba2.svg", "rb"),write_to="/code/login/img/alibaba2.png")
-            # im = open('{}/login/code/alibaba2.png'.format(path), 'rb').read()
             im = open('/code/login/img/alibaba2.png', 'rb').read()
             chaojiying = Chaojiying_Client()
             code = chaojiying.PostPic(im, 1004)
             global err
             err = code["pic_id"]
             result = code["pic_str"].lower()
-            logger.info('验证码识别结果为:')
-            logger.info(result)
+            logger.info(f'验证码识别结果为:{result}')
             mysql_conn.ping(reconnect=True)
             cursor = mysql_conn.cursor()
             cursor.execute(
@@ -137,10 +117,8 @@ class AlibabaLogin(object):
             account = random.choice(acc)
             username = account[0]
             password = account[1]
-            logger.info('获取登录用户名:')
-            logger.info(username)
-            logger.info('获取登录用户密码:')
-            logger.info(password)
+            logger.info(f'获取登录用户名:{username}')
+            logger.info(f'获取登录用户密码:{password}')
             form = {
                 'captcha':result,
                 'name':username,
@@ -154,13 +132,11 @@ class AlibabaLogin(object):
 
     def form_post(self,form):
         response = self.session.post(self.login_url,headers=self.headers,proxies=self.proxies,data=form)
-        logger.info('请求提交登录表单:')
-        logger.info(response.status_code)
+        logger.info(f'请求提交登录表单:{response.status_code}')
         if 'Welcome to ' in response.text:
             logger.info('登录成功!!!')
             cookies = requests.utils.dict_from_cookiejar(self.session.cookies)
-            logger.info('Cookie值:')
-            logger.info(cookies)
+            logger.info(f'Cookie值:{cookies}')
             jsonCookies = json.dumps(cookies)
             mysql_conn.ping(reconnect=True)
             cursor = mysql_conn.cursor()
