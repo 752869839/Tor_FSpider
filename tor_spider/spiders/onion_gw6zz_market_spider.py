@@ -48,56 +48,46 @@ class DarkSpider(scrapy.Spider):
         urls = response.xpath('//div[@class="list-box _contain-pds"]//a/@href').extract()
         for url in urls:
             url = response.urljoin(url)
-            logger.info('商品链接')
-            logger.info(url)
+            logger.info(f'商品链接:{url}')
             yield Request(url, callback=self.parse_second, meta={'item': item})
 
     def parse_second(self,response):
-        logger.info('请求状态码')
-        logger.info(response.status)
+        logger.info(f'请求状态码:{response.status}')
         item = response.meta['item']
         if response.url[0:78] == "http://gw6zzvqgy6v2czxrmphuerrtbirftvkyfkeoaiorg5qijqlsbqfpqjqd.onion/category":
             try:
                 page = response.xpath('//li[@class="df-btn"][last()]/a/text()').extract()[0]
-                print(page)
                 for num in range(1,int(page)+1):
                     next_page = response.url[0:81] + '/' + str(num)
-                    logger.info('翻页链接')
-                    logger.info(next_page)
+                    logger.info(f'翻页链接:{next_page}')
                     yield Request(next_page, callback=self.parse_third,meta={'item': item})
             except Exception as e:
                 pass
 
     def parse_third(self,response):
-        logger.info('翻页链接')
-        logger.info(response.url)
-        logger.info('请求状态码')
-        logger.info(response.status)
+        logger.info(f'请求状态码:{response.status}')
         item = response.meta['item']
         try:
             details_urls = response.xpath('//li[@class="ea-contain-li"]/span[3]/a/@href').extract()
             for details_url in details_urls:
                 details_url = response.urljoin(details_url)
-                # logger.info('商品链接')
-                # logger.info(details_url)
+                logger.info(f'商品详情链接:{details_url}')
                 yield Request(details_url, callback=self.parse_fourth, meta={'item': item})
         except Exception as e:
             pass
 
     def parse_fourth(self, response):
-        logger.info('商品详情链接')
-        logger.info(response.url)
-        logger.info('请求状态码')
-        logger.info(response.status)
+        logger.info(f'请求状态码:{response.status}')
         item = response.meta['item']
-        try:
-            img_url_list = []
-            img_urls = response.xpath('//img/@src').extract()
-            for img_url in img_urls:
-                img_url = response.urljoin(img_url)
-                img_url_list.append(img_url)
-            item['img_url'] = img_url_list
-        except Exception as e:
+        imgs = response.xpath('//img/@src').extract()
+        if len(imgs) > 0:
+            l_img = []
+            for i in imgs:
+                img = response.urljoin(i)
+                l_img.append(img)
+            item['img'] = l_img
+            item['html'] = str(response.body, encoding='utf-8')
+        else:
             pass
 
         item['url'] = str(response.url)

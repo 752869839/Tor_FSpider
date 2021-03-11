@@ -49,24 +49,22 @@ class DarkSpider(scrapy.Spider):
         list_urls = response.xpath('//ul[@id="side-menu"]/li/a/@href').extract()
         for list_url in list_urls:
             list_url = response.urljoin(list_url)
-            logger.info('主页列表页链接')
-            logger.info(list_url)
+            logger.info(f'主页列表页链接:{list_url}')
             yield Request(list_url, callback=self.parse_second,meta={'item': item})
 
     def parse_second(self, response):
-        logger.info('请求状态码')
-        logger.info(response.status)
+        logger.info(f'请求状态码:{response.status}')
         item = response.meta['item']
-        try:
-            img_url_list = []
-            img_urls = response.xpath('//img/@src').extract()
-            for img_url in img_urls:
-                img_url = response.urljoin(img_url)
-                img_url_list.append(img_url)
-            item['img_url'] = img_url_list
-        except Exception as e:
+        imgs = response.xpath('//img/@src').extract()
+        if len(imgs) > 0:
+            l_img = []
+            for i in imgs:
+                img = response.urljoin(i)
+                l_img.append(img)
+            item['img'] = l_img
+            item['html'] = str(response.body, encoding='utf-8')
+        else:
             pass
-
         item['url'] = str(response.url)
         item['domain'] = urllib.parse.urlparse(response.url).netloc
         item['title'] = response.xpath('//html/head/title/text()').extract_first()
@@ -89,27 +87,25 @@ class DarkSpider(scrapy.Spider):
             pg = re.findall(r'pg=([\s|\S]+)',next_pages)[0]
             for i in range(0,int(pg)):
                 next_page = response.url+'&pg={}'.format(i)
-                logger.info('翻页链接')
-                logger.info(next_page)
+                logger.info(f'翻页链接:{next_page}')
                 yield Request(next_page, callback=self.parse_next_page, meta={'item': item})
         except Exception as e:
             pass
 
 
     def parse_next_page(self,response):
-        logger.info('请求状态码')
-        logger.info(response.status)
+        logger.info(f'请求状态码:{response.status}')
         item = response.meta['item']
-        try:
-            img_url_list = []
-            img_urls = response.xpath('//img/@src').extract()
-            for img_url in img_urls:
-                img_url = response.urljoin(img_url)
-                img_url_list.append(img_url)
-            item['img_url'] = img_url_list
-        except Exception as e:
+        imgs = response.xpath('//img/@src').extract()
+        if len(imgs) > 0:
+            l_img = []
+            for i in imgs:
+                img = response.urljoin(i)
+                l_img.append(img)
+            item['img'] = l_img
+            item['html'] = str(response.body, encoding='utf-8')
+        else:
             pass
-
         item['url'] = str(response.url)
         item['domain'] = urllib.parse.urlparse(response.url).netloc
         item['title'] = response.xpath('//html/head/title/text()').extract_first()
@@ -130,24 +126,22 @@ class DarkSpider(scrapy.Spider):
         details_urls = response.xpath('//div[@class="col-sm-8"]/small[1]/a/@href|//div[@class="col-sm-8"]/small[2]/a[last()]/@href').extract()
         for detail_url in details_urls:
             detail_url = response.urljoin(detail_url)
-            logger.info('详情链接')
-            logger.info(detail_url)
+            logger.info(f'详情链接:{detail_url}')
             yield Request(detail_url, callback=self.parse_third,meta={'item': item})
 
     def parse_third(self,response):
-        logger.info('请求状态码')
-        logger.info(response.status)
+        logger.info(f'请求状态码:{response.status}')
         item = response.meta['item']
-        try:
-            img_url_list = []
-            img_urls = response.xpath('//img/@src').extract()
-            for img_url in img_urls:
-                img_url = response.urljoin(img_url)
-                img_url_list.append(img_url)
-            item['img_url'] = img_url_list
-        except Exception as e:
+        imgs = response.xpath('//img/@src').extract()
+        if len(imgs) > 0:
+            l_img = []
+            for i in imgs:
+                img = response.urljoin(i)
+                l_img.append(img)
+            item['img'] = l_img
+            item['html'] = str(response.body, encoding='utf-8')
+        else:
             pass
-
         item['url'] = str(response.url)
         item['domain'] = urllib.parse.urlparse(response.url).netloc
         item['title'] = response.xpath('//html/head/title/text()').extract_first()
@@ -170,19 +164,18 @@ class DarkSpider(scrapy.Spider):
             yield Request(pgp_url, callback=self.parse_fourth, meta={'item': item})
 
     def parse_fourth(self,response):
-        logger.info('请求状态码')
-        logger.info(response.status)
+        logger.info(f'请求状态码:{response.status}')
         item = response.meta['item']
-        try:
-            img_url_list = []
-            img_urls = response.xpath('//img/@src').extract()
-            for img_url in img_urls:
-                img_url = response.urljoin(img_url)
-                img_url_list.append(img_url)
-            item['img_url'] = img_url_list
-        except Exception as e:
+        imgs = response.xpath('//img/@src').extract()
+        if len(imgs) > 0:
+            l_img = []
+            for i in imgs:
+                img = response.urljoin(i)
+                l_img.append(img)
+            item['img'] = l_img
+            item['html'] = str(response.body, encoding='utf-8')
+        else:
             pass
-
         item['url'] = str(response.url)
         item['domain'] = urllib.parse.urlparse(response.url).netloc
         item['title'] = response.xpath('//html/head/title/text()').extract_first()

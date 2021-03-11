@@ -24,7 +24,7 @@ class TorDataPipeline(object):
         for e in ele:
             e.getparent().remove(e)
         actions = [{
-            "_index": 'hidden',
+            "_index": 'hidden2',
             "_id": p_id(item['domain'],htmlmin.minify(item['html'].encode('utf-8').decode('utf-8'), remove_all_empty_space=True)),
             # "_type": '_doc',
             "_source": {
@@ -51,7 +51,7 @@ class TorDataPipeline(object):
                 "gmt_modified": item['crawl_time'],
             }
         }]
-        success, _ = bulk(es_conn, actions, index='hidden', raise_on_error=True)
+        success, _ = bulk(es_conn, actions, index='hidden2', raise_on_error=True)
 
         return item
 

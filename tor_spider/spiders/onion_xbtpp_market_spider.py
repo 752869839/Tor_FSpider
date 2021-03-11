@@ -50,19 +50,16 @@ class DarkSpider(scrapy.Spider):
         list_urls = response.xpath('//div[@class="col-lg-6 p-md-1"]/a/@href').extract()
         for list_url in list_urls:
             list_url = response.urljoin(list_url)
-            logger.info('列表链接')
-            logger.info(list_url)
+            logger.info(f'列表链接:{list_url}')
             yield Request(list_url, callback=self.parse_sencond, meta={'item': item})
 
     def parse_sencond(self,response):
-        logger.info('请求状态码')
-        logger.info(response.status)
+        logger.info(f'请求状态码:{response.status}')
         item = response.meta['item']
         list_urls = response.xpath('//a[@class="x-cmd d-block tradeitem"]/@href').extract()
         for list_url in list_urls:
             list_url = response.urljoin(list_url)
-            logger.info('列表链接')
-            logger.info(list_url)
+            logger.info(f'列表链接:{list_url}')
             yield Request(list_url, callback=self.parse_third, meta={'item': item})
 
         # next_pages = response.xpath('//ul[@class="pagination text-center"]/li/a/@href').extract()
@@ -74,17 +71,17 @@ class DarkSpider(scrapy.Spider):
         #             yield Request(page, callback=self.parse_sencond, meta={'item': item})
 
     def parse_third(self,response):
-        logger.info('请求状态码')
-        logger.info(response.status)
+        logger.info(f'请求状态码:{response.status}')
         item = response.meta['item']
-        try:
-            img_url_list = []
-            img_urls = response.xpath('//img/@src').extract()
-            for img_url in img_urls:
-                img_url = response.urljoin(img_url)
-                img_url_list.append(img_url)
-            item['img_url'] = img_url_list
-        except Exception as e:
+        imgs = response.xpath('//img/@src').extract()
+        if len(imgs) > 0:
+            l_img = []
+            for i in imgs:
+                img = response.urljoin(i)
+                l_img.append(img)
+            item['img'] = l_img
+            item['html'] = str(response.body, encoding='utf-8')
+        else:
             pass
 
         item['url'] = str(response.url)

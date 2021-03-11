@@ -9,8 +9,8 @@ import urllib.parse
 from datetime import datetime
 from scrapy import Request
 from tor_spider.items import HtmlItem
-logger = logging.getLogger(__name__)
 
+logger = logging.getLogger(__name__)
 class DarkSpider(scrapy.Spider):
     name = 'onion_guns_market_spider'
     # allowed_domains = ['gunsganos2raowan5y2nkblujnmza32v2cwkdgy6okciskzabchx4iqd.onion']
@@ -50,24 +50,21 @@ class DarkSpider(scrapy.Spider):
         list_urls = response.xpath('//figure[@class="cap-left stealth cap-top"]/a/@href').extract()
         for list_url in list_urls:
             list_url = response.urljoin(list_url)
-            # logger.info('商品列表url')
-            # logger.info(list_url)
             yield Request(list_url, callback=self.parse_second,meta={'item': item})
 
     def parse_second(self, response):
-        logger.info('商品详情链接')
-        logger.info(response.url)
-        logger.info('响应状态码')
-        logger.info(response.status)
+        logger.info(f'商品详情链接:{response.url}')
+        logger.info(f'请求状态码:{response.status}')
         item = response.meta['item']
-        try:
-            img_url_list = []
-            img_urls = response.xpath('//img/@src').extract()
-            for img_url in img_urls:
-                img_url = response.urljoin(img_url)
-                img_url_list.append(img_url)
-            item['img_url'] = img_url_list
-        except Exception as e:
+        imgs = response.xpath('//img/@src').extract()
+        if len(imgs) > 0:
+            l_img = []
+            for i in imgs:
+                img = response.urljoin(i)
+                l_img.append(img)
+            item['img'] = l_img
+            item['html'] = str(response.body, encoding='utf-8')
+        else:
             pass
 
         item['url'] = str(response.url)
@@ -87,32 +84,28 @@ class DarkSpider(scrapy.Spider):
 
         yield item
 
-        try:
-            view_urls = response.xpath('//tr[4]/td[3]/span[2]/a/@href').extract()
+        view_urls = response.xpath('//tr[4]/td[3]/span[2]/a/@href').extract()
+        if len(view_urls) > 0:
             for view_url in view_urls:
                 view_url = response.urljoin(view_url)
-                # logger.info('商品评论链接')
-                # logger.info(view_url)
                 yield Request(view_url, callback=self.parse_third, meta={'item': item})
-        except Exception as e:
+        else:
             pass
 
     def parse_third(self, response):
-        logger.info('商品评论链接')
-        logger.info(response.url)
-        logger.info('响应状态码')
-        logger.info(response.status)
+        logger.info(f'商品评论链接:{response.url}')
+        logger.info(f'请求状态码:{response.status}')
         item = response.meta['item']
-        try:
-            img_url_list = []
-            img_urls = response.xpath('//img/@src').extract()
-            for img_url in img_urls:
-                img_url = response.urljoin(img_url)
-                img_url_list.append(img_url)
-            item['img_url'] = img_url_list
-        except Exception as e:
+        imgs = response.xpath('//img/@src').extract()
+        if len(imgs) > 0:
+            l_img = []
+            for i in imgs:
+                img = response.urljoin(i)
+                l_img.append(img)
+            item['img'] = l_img
+            item['html'] = str(response.body, encoding='utf-8')
+        else:
             pass
-
         item['url'] = str(response.url)
         item['domain'] = urllib.parse.urlparse(response.url).netloc
         item['title'] = response.xpath('//html/head/title/text()').extract_first()

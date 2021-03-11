@@ -49,22 +49,21 @@ class DarkSpider(scrapy.Spider):
         list_urls = response.xpath('//tbody/tr/td//strong/a/@href').extract()
         for list_url in list_urls:
             list_url = response.urljoin(list_url)
-            logger.info('首页链接')
-            logger.info(list_url)
+            logger.info(f'首页链接:{list_url}')
             yield Request(list_url, callback=self.parse_sencond, meta={'item': item})
 
     def parse_sencond(self,response):
-        logger.info('请求状态码')
-        logger.info(response.status)
+        logger.info(f'请求状态码:{response.status}')
         item = response.meta['item']
-        try:
-            img_url_list = []
-            img_urls = response.xpath('//img/@src').extract()
-            for img_url in img_urls:
-                img_url = response.urljoin(img_url)
-                img_url_list.append(img_url)
-            item['img_url'] = img_url_list
-        except Exception as e:
+        imgs = response.xpath('//img/@src').extract()
+        if len(imgs) > 0:
+            l_img = []
+            for i in imgs:
+                img = response.urljoin(i)
+                l_img.append(img)
+            item['img'] = l_img
+            item['html'] = str(response.body, encoding='utf-8')
+        else:
             pass
 
         item['url'] = str(response.url)
@@ -87,33 +86,29 @@ class DarkSpider(scrapy.Spider):
         urls = response.xpath('//tr[@class="inline_row"]/td[1]/div//a/@href').extract()
         for url in urls:
             url = response.urljoin(url)
-            # logger.info('帖子链接')
-            # logger.info(url)
+            logger.info(f'帖子链接:{url}')
             yield Request(url, callback=self.parse_third, meta={'item': item})
 
         try:
             next_page = response.xpath('//a[text()= "下一頁 »"]/@href').extract()[0]
             next_page = response.urljoin(next_page)
-            logger.info('翻页链接')
-            logger.info(next_page)
+            logger.info(f'翻页链接:{next_page}')
             yield Request(next_page, callback=self.parse_sencond, meta={'item': item})
         except Exception as e:
             pass
 
     def parse_third(self, response):
-        logger.info('帖子详情链接')
-        logger.info(response.url)
-        logger.info('请求状态码')
-        logger.info(response.status)
+        logger.info(f'请求状态码:{response.status}')
         item = response.meta['item']
-        try:
-            img_url_list = []
-            img_urls = response.xpath('//img/@src').extract()
-            for img_url in img_urls:
-                img_url = response.urljoin(img_url)
-                img_url_list.append(img_url)
-            item['img_url'] = img_url_list
-        except Exception as e:
+        imgs = response.xpath('//img/@src').extract()
+        if len(imgs) > 0:
+            l_img = []
+            for i in imgs:
+                img = response.urljoin(i)
+                l_img.append(img)
+            item['img'] = l_img
+            item['html'] = str(response.body, encoding='utf-8')
+        else:
             pass
 
         item['url'] = str(response.url)

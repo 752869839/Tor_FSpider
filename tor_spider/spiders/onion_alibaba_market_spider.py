@@ -51,13 +51,11 @@ class DarkSpider(scrapy.Spider):
         list_urls = response.xpath('//div[@class="flex-fill float-left"]/a/@href').extract()
         for list_url in list_urls[1:2]:
             list_url = response.urljoin(list_url)
-            logger.info('主页列表页链接')
-            logger.info(list_url)
+            logger.info(f'主页列表页链接:{list_url}')
             yield Request(list_url, callback=self.parse_sencond, meta={'item': item})
 
     def parse_sencond(self, response):
-        logger.info('请求状态码')
-        logger.info(response.status)
+        logger.info(f'请求状态码:{response.status}')
         item = response.meta['item']
         try:
             next_pages = response.xpath('//ul[@class="pagination text-center"]/li[last()]/a/@href').extract()[0]
@@ -65,41 +63,33 @@ class DarkSpider(scrapy.Spider):
             for i in range(1,int(pg)):
             #for i in range(1,3):
                 next_page = response.url+'?page={}'.format(i)
-                # logger.info('翻页链接')
-                # logger.info(next_page)
+                logger.info(f'翻页链接:{next_page}')
                 yield Request(next_page, callback=self.parse_next_page, meta={'item': item})
         except Exception as e:
             pass
 
     def parse_next_page(self,response):
-        logger.info('翻页链接')
-        logger.info(response.url)
-        logger.info('请求状态码')
-        logger.info(response.status)
+        logger.info(f'请求状态码:{response.status}')
         item = response.meta['item']
         list_urls = response.xpath('//div[@class="col-md-6 pt-3 pl-md-3 pr-md-3"]/a/@href').extract()
         for list_url in list_urls:
             list_url = response.urljoin(list_url)
-            # logger.info('商品详情链接')
-            # logger.info(list_url)
+            logger.info(f'商品链接:{list_url}')
             yield Request(list_url, callback=self.parse_third, meta={'item': item})
 
     def parse_third(self,response):
-        logger.info('商品详情链接')
-        logger.info(response.url)
-        logger.info('请求状态码')
-        logger.info(response.status)
+        logger.info(f'请求状态码:{response.status}')
         item = response.meta['item']
-        try:
-            img_url_list = []
-            img_urls = response.xpath('//img/@src').extract()
-            for img_url in img_urls:
-                img_url = response.urljoin(img_url)
-                img_url_list.append(img_url)
-            item['img_url'] = img_url_list
-        except Exception as e:
+        imgs = response.xpath('//img/@src').extract()
+        if len(imgs) > 0:
+            l_img = []
+            for i in imgs:
+                img = response.urljoin(i)
+                l_img.append(img)
+            item['img'] = l_img
+            item['html'] = str(response.body, encoding='utf-8')
+        else:
             pass
-
         item['url'] = str(response.url)
         item['domain'] = urllib.parse.urlparse(response.url).netloc
         item['title'] = response.xpath('//html/head/title/text()').extract_first()

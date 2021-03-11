@@ -14,7 +14,7 @@ from elasticsearch import Elasticsearch
 
 #proxy
 HTTP_PROXY = ["http://172.16.30.66:3122"]
-SOCKS_PROXY = ['socks5://172.16.20.125:1234','socks5://172.16.20.125:2345','socks5://172.16.20.125:3456','socks5://172.16.20.125:4567','socks5://172.16.20.125:5678','socks5://172.16.20.125:6789']
+SOCKS_PROXY = ['socks5://172.16.20.125:6666','socks5://172.16.20.125:7777','socks5://172.16.20.125:8948','socks5://172.16.20.125:12345']
 
 # elasticsearch
 e_host='172.16.20.178'
