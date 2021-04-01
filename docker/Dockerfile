@@ -1,14 +1,14 @@
 FROM ubuntu:18.04
 RUN sed -i -e 's/archive\.ubuntu\.com/mirrors.tuna.tsinghua.edu.cn/g' /etc/apt/sources.list
 RUN sed -i -e 's/security\.ubuntu\.com/mirrors.tuna.tsinghua.edu.cn/g' /etc/apt/sources.list
-ADD . /code
+
 WORKDIR /code
 RUN  mkdir -p /code/login/img
 
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get -y update
 RUN apt-get -y upgrade
-RUN apt-get -y vim unzip
+RUN apt-get -y install vim unzip
 
 ENV TZ 'Asia/Shanghai'
 RUN echo $TZ > /etc/timezone
