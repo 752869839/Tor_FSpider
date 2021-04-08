@@ -19,7 +19,7 @@ SOCKS_PROXY = ['socks5://172.16.20.125:6666','socks5://172.16.20.125:7777','sock
 # elasticsearch
 e_host='172.16.20.178'
 e_port=9200
-es_conn = Elasticsearch(hosts=e_host, port=e_port)
+es_conn = Elasticsearch(hosts=e_host, port=e_port, timeout=30, max_retries=10)
 
 #mysql
 m_host="172.16.20.178"
