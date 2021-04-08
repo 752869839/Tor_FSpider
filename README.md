@@ -5,10 +5,10 @@
 环境依赖: 服务器n台操作系统不限、 docker版本不限、 mysql 5.7.32、 redis 6.0.8、 elasticsearch 7.8.1、 seaweedfs文件服务器、 tor通道n个
 
 上传项目到目标服务器,系统防火墙需开放5000、6800、6801端口,并安装docker服务
-cd /tor_spider/docker
+cd /Tor_ASpider/docker
 修改 scrapyd.conf、scrapyd_monitor.sh  相关配置为你部署服务器地址
 docker build -t scrapyd:latest .      镜像构建时间可能较长耐心等待
-将 /tor_spider/docker/crontab.txt  内容输入crontab -e 设定定时任务
+将 /Tor_ASpider/docker/crontab.txt  内容输入crontab -e 设定定时任务
 修改 /tor_spider/settings.py  相关配置
 
 
