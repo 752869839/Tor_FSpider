@@ -1,4 +1,4 @@
 from scrapy import cmdline
-cmdline.execute('scrapy crawl onion_xs6qb_market_spider'.split())
+cmdline.execute('scrapy crawl com_raid_bbs_spider'.split())
 
 
