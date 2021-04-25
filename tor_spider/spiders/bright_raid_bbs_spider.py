@@ -18,7 +18,6 @@ class DarkSpider(scrapy.Spider):
     custom_settings = {
         'DEFAULT_REQUEST_HEADERS': {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.72 Safari/537.36',
-            'authority': 'raidforums.onion',
             'Connection': 'close',
             'Upgrade-Insecure-Requests': '1',
         },
@@ -30,12 +29,13 @@ class DarkSpider(scrapy.Spider):
         'DOWNLOADER_MIDDLEWARES': {
             # 'tor_spider.middlewares.IpProxyDownloadMiddleware': 300,
             'tor_spider.middlewares.VSocksProxyDownloadMiddleware': 300,
+            'tor_spider.middlewares.RandomUserAgentMiddleware': 311,
         },
         'DOWNLOAD_HANDLERS': {
             'http': 'tor_spider.handlers.Socks5DownloadHandler',
             'https': 'tor_spider.handlers.Socks5DownloadHandler',
         },
-        'DOWNLOAD_DELAY' : 0.5
+        'DOWNLOAD_DELAY' : 1
     }
 
     def parse(self, response):

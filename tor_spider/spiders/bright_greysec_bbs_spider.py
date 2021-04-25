@@ -11,13 +11,14 @@ from tor_spider.items import HtmlItem
 
 logger = logging.getLogger(__name__)
 class DarkSpider(scrapy.Spider):
-    name = 'bright_eleaks_bbs_spider'
-    # allowed_domains = ['eleaks.to/']
-    start_urls = ['https://eleaks.to/']
+    name = 'bright_greysec_bbs_spider'
+    # allowed_domains = ['greysec.net/']
+    start_urls = ['https://greysec.net/']
 
     custom_settings = {
         'DEFAULT_REQUEST_HEADERS': {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.72 Safari/537.36',
+            'Host': 'greysec.net',
             'Connection': 'close',
             'Upgrade-Insecure-Requests': '1',
         },
@@ -40,7 +41,7 @@ class DarkSpider(scrapy.Spider):
     def parse(self, response):
         logger.info('开始采集!!!')
         item = HtmlItem()
-        list_urls = response.xpath('//h3[@class="node-title"]/a/@href').extract()
+        list_urls = response.xpath('//td[@class="trow1" or @class="trow2"]/strong/a/@href').extract()
         for list_url in list_urls:
             list_url = response.urljoin(list_url)
             logger.info(f'主页列表页链接:{list_url}')
@@ -66,14 +67,14 @@ class DarkSpider(scrapy.Spider):
 
         yield item
 
-        list_urls = response.xpath('//div[@class="structItem-title"]/a/@href').extract()
+        list_urls = response.xpath('//span[@class=" subject_new"]/a/@href').extract()
         for list_url in list_urls:
             list_url = response.urljoin(list_url)
             logger.info(f'详情链接: {list_url}')
             yield Request(list_url, callback=self.parse_third, meta={'item': item})
 
         try:
-            next_page = response.xpath('//a[@class="pageNav-jump pageNav-jump--next"]/@href').extract()[0]
+            next_page = response.xpath('//a[text()= "Next »"]/@href').extract()[0]
             next_page = response.urljoin(next_page)
             logger.info(f'翻页链接:  {next_page}')
             yield Request(next_page, callback=self.parse_sencond, meta={'item': item})
@@ -108,13 +109,12 @@ class DarkSpider(scrapy.Spider):
 
         item['crawl_time'] = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S")
 
-        yield item
-
         try:
-            next_page = response.xpath('//a[@class="pageNav-jump pageNav-jump--next"]/@href').extract()[0]
+            next_page = response.xpath('//a[text()= "Next »"]/@href').extract()[0]
             next_page = response.urljoin(next_page)
             logger.info(f'翻页链接:  {next_page}')
             yield Request(next_page, callback=self.parse_third, meta={'item': item})
         except Exception as e:
             pass
 
+        yield item

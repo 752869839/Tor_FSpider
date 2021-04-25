@@ -11,9 +11,9 @@ from tor_spider.items import HtmlItem
 
 logger = logging.getLogger(__name__)
 class DarkSpider(scrapy.Spider):
-    name = 'bright_eleaks_bbs_spider'
-    # allowed_domains = ['eleaks.to/']
-    start_urls = ['https://eleaks.to/']
+    name = 'bright_sinfulsite_bbs_spider'
+    # allowed_domains = ['sinfulsite.com/']
+    start_urls = ['https://sinfulsite.com/']
 
     custom_settings = {
         'DEFAULT_REQUEST_HEADERS': {
@@ -34,13 +34,13 @@ class DarkSpider(scrapy.Spider):
             'http': 'tor_spider.handlers.Socks5DownloadHandler',
             'https': 'tor_spider.handlers.Socks5DownloadHandler',
         },
-        'DOWNLOAD_DELAY' : 0.2
+        'DOWNLOAD_DELAY' : 0.1
     }
 
     def parse(self, response):
         logger.info('开始采集!!!')
         item = HtmlItem()
-        list_urls = response.xpath('//h3[@class="node-title"]/a/@href').extract()
+        list_urls = response.xpath('//div[@class="name"]/a/@href').extract()
         for list_url in list_urls:
             list_url = response.urljoin(list_url)
             logger.info(f'主页列表页链接:{list_url}')
@@ -66,14 +66,14 @@ class DarkSpider(scrapy.Spider):
 
         yield item
 
-        list_urls = response.xpath('//div[@class="structItem-title"]/a/@href').extract()
+        list_urls = response.xpath('//span[@class=" subject_new"]/a/@href').extract()
         for list_url in list_urls:
             list_url = response.urljoin(list_url)
             logger.info(f'详情链接: {list_url}')
             yield Request(list_url, callback=self.parse_third, meta={'item': item})
 
         try:
-            next_page = response.xpath('//a[@class="pageNav-jump pageNav-jump--next"]/@href').extract()[0]
+            next_page = response.xpath('//a[text()= "Next »"]/@href').extract()[0]
             next_page = response.urljoin(next_page)
             logger.info(f'翻页链接:  {next_page}')
             yield Request(next_page, callback=self.parse_sencond, meta={'item': item})
@@ -111,10 +111,9 @@ class DarkSpider(scrapy.Spider):
         yield item
 
         try:
-            next_page = response.xpath('//a[@class="pageNav-jump pageNav-jump--next"]/@href').extract()[0]
+            next_page = response.xpath('//a[text()= "Next »"]/@href').extract()[0]
             next_page = response.urljoin(next_page)
             logger.info(f'翻页链接:  {next_page}')
             yield Request(next_page, callback=self.parse_third, meta={'item': item})
         except Exception as e:
             pass
-

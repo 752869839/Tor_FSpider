@@ -11,9 +11,9 @@ from tor_spider.items import HtmlItem
 
 logger = logging.getLogger(__name__)
 class DarkSpider(scrapy.Spider):
-    name = 'bright_eleaks_bbs_spider'
-    # allowed_domains = ['eleaks.to/']
-    start_urls = ['https://eleaks.to/']
+    name = 'bright_nixware_bbs_spider'
+    # allowed_domains = ['nixware.cc/']
+    start_urls = ['https://nixware.cc/']
 
     custom_settings = {
         'DEFAULT_REQUEST_HEADERS': {
@@ -34,7 +34,7 @@ class DarkSpider(scrapy.Spider):
             'http': 'tor_spider.handlers.Socks5DownloadHandler',
             'https': 'tor_spider.handlers.Socks5DownloadHandler',
         },
-        'DOWNLOAD_DELAY' : 0.2
+        'DOWNLOAD_DELAY' : 0.1
     }
 
     def parse(self, response):
@@ -73,7 +73,7 @@ class DarkSpider(scrapy.Spider):
             yield Request(list_url, callback=self.parse_third, meta={'item': item})
 
         try:
-            next_page = response.xpath('//a[@class="pageNav-jump pageNav-jump--next"]/@href').extract()[0]
+            next_page = response.xpath('//a[text()= "Next"]/@href').extract()[0]
             next_page = response.urljoin(next_page)
             logger.info(f'翻页链接:  {next_page}')
             yield Request(next_page, callback=self.parse_sencond, meta={'item': item})
@@ -111,10 +111,9 @@ class DarkSpider(scrapy.Spider):
         yield item
 
         try:
-            next_page = response.xpath('//a[@class="pageNav-jump pageNav-jump--next"]/@href').extract()[0]
+            next_page = response.xpath('//a[text()= "Next"]/@href').extract()[0]
             next_page = response.urljoin(next_page)
             logger.info(f'翻页链接:  {next_page}')
             yield Request(next_page, callback=self.parse_third, meta={'item': item})
         except Exception as e:
             pass
-
