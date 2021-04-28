@@ -12,7 +12,7 @@ def phone_extract(text):
     return list(set(tmp + tmp2))
 
 """QQ"""
-REGEX_QQ = re.compile(r'[1-9]\d{4,9}', re.M | re.S | re.I)
+REGEX_QQ = re.compile(r'[1-9]\d{5,10}', re.M | re.S | re.I)
 def qq_extract(content):
     qq = re.findall(REGEX_QQ, content)
     return list(set(qq))
