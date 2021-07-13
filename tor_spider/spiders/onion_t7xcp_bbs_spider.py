@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import json
 import scrapy
+import random
 import chardet
 import langid
 import logging
@@ -11,9 +12,9 @@ from tor_spider.items import HtmlItem
 
 logger = logging.getLogger(__name__)
 class DarkSpider(scrapy.Spider):
-    name = 'onion_lfwpm_bbs_spider'
-    # allowed_domains = ['lfwpmgou2lz3jnt7mg3gorzkfnhnhgumbijn4ubossgs3wzsxkg6gvyd.onion/']
-    start_urls = ['http://lfwpmgou2lz3jnt7mg3gorzkfnhnhgumbijn4ubossgs3wzsxkg6gvyd.onion/']
+    name = 'onion_t7xcp_bbs_spider'
+    # allowed_domains = ['t7xcpwokiagivyzq.onion/']
+    start_urls = ['http://t7xcpwokiagivyzq.onion/']
 
     custom_settings = {
         'DEFAULT_REQUEST_HEADERS': {
@@ -21,55 +22,44 @@ class DarkSpider(scrapy.Spider):
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
             'Accept-Encoding': 'gzip, deflate',
             'Accept-Language': 'en-US,en;q=0.5',
-            'Host': 'lfwpmgou2lz3jnt7mg3gorzkfnhnhgumbijn4ubossgs3wzsxkg6gvyd.onion',
+            'Host': 't7xcpwokiagivyzq.onion',
             'Connection': 'close',
             'Upgrade-Insecure-Requests': '1',
         },
-        'ITEM_PIPELINES' : {
+        'ITEM_PIPELINES': {
             'tor_spider.pipelines.TorDataPipeline': 188,
             'tor_spider.pipelines.DownloadImagesPipeline': 110,
             # 'scrapy_redis.pipelines.RedisPipeline': 100,
-},
+        },
         'DOWNLOADER_MIDDLEWARES': {
             # 'tor_spider.middlewares.IpProxyDownloadMiddleware': 300,
             'tor_spider.middlewares.SocksProxyDownloadMiddleware': 300,
-            'tor_spider.middlewares.Lfwpm_LoginMiddleware': 100,
-            'tor_spider.middlewares.Lfwpm_CookieMiddleware': 400,
         },
         'DOWNLOAD_HANDLERS': {
             'http': 'tor_spider.handlers.Socks5DownloadHandler',
             'https': 'tor_spider.handlers.Socks5DownloadHandler',
         },
-        'DOWNLOAD_DELAY': 1
+        'DOWNLOAD_DELAY' : 1
     }
 
     def parse(self, response):
         logger.info('开始采集!!!')
         item = HtmlItem()
-        list_urls = response.xpath('//div[@class="fl_icn_g"]/a/@href').extract()
-        for list_url in list_urls:
+        list_urls = response.xpath('//h2/a/@href').extract()
+        for list_url in list_urls[1:12]:
             list_url = response.urljoin(list_url)
-            logger.info(f'首页链接:{list_url}')
+            logger.info(f'详情链接:{list_url}')
             yield Request(list_url, callback=self.parse_sencond, meta={'item': item})
 
-    def parse_sencond(self, response):
-        logger.info(f'请求状态码:{response.status}')
-        item = response.meta['item']
-        list_urls = response.xpath('//a[@class="s xst"]/@href').extract()
-        for list_url in list_urls:
-            list_url = response.urljoin(list_url)
-            logger.info(f'帖子链接:{list_url}')
-            yield Request(list_url, callback=self.parse_third, meta={'item': item})
-
         try:
-            next_page = response.xpath('//a[text()="下一页"]/@href').extract()[0]
+            next_page = response.xpath('//a[text()="»"]/@href').extract()[0]
             next_page = response.urljoin(next_page)
             logger.info(f'翻页链接:{next_page}')
-            yield Request(next_page, callback=self.parse_sencond, meta={'item': item})
+            yield Request(next_page, callback=self.parse, meta={'item': item})
         except Exception as e:
             pass
 
-    def parse_third(self,response):
+    def parse_sencond(self, response):
         logger.info(f'请求状态码:{response.status}')
         item = response.meta['item']
         imgs = response.xpath('//img/@src').extract()
@@ -99,14 +89,3 @@ class DarkSpider(scrapy.Spider):
         item['crawl_time'] = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S")
 
         yield item
-
-        try:
-            next_page = response.xpath('//a[text()="下一页"]/@href').extract()[0]
-            next_page = response.urljoin(next_page)
-            logger.info(f'翻页链接:{next_page}')
-            yield Request(next_page, callback=self.parse_third, meta={'item': item})
-        except Exception as e:
-            pass
-
-
-

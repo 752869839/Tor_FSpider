@@ -9,6 +9,8 @@ import time
 import random
 import scrapy
 from selenium import webdriver
+from fake_useragent import UserAgent
+from scrapy.exceptions import IgnoreRequest
 from scrapy.utils.project import get_project_settings
 from selenium.webdriver.support.wait import WebDriverWait
 from scrapy.downloadermiddlewares.retry import RetryMiddleware
@@ -30,7 +32,7 @@ from login.hour24 import Hour24Login
 from login.xbtpp import XbtppLogin
 from login.cannazon import CannazonLogin
 
-#IPMiddleware
+
 # class IpProxyDownloadMiddleware(object):
 #     def process_request(self, request, spider):
 #         settings = get_project_settings()
@@ -56,6 +58,29 @@ class SocksProxyDownloadMiddleware(object):
         cursor.close()
         proxy_mysql_conn.close()
         request.meta['proxy'] = random.choice(proxy_list)
+
+
+
+class RandomUserAgentMiddleware(object):
+
+    def __init__(self):
+        self.ua = UserAgent(verify_ssl=False)
+
+    def process_request(self, request, spider):
+        if spider.name != '':
+            request.headers['User-Agent'] = self.ua.random
+            return None
+        else:
+            raise IgnoreRequest
+
+    def process_response(self, request, response, spider):
+        if spider.name != '':
+            return response
+        else:
+            raise IgnoreRequest
+
+    def process_exception(self, request, exception, spider):
+        pass
 
 class Agarth_LoginMiddleware(object):
     def process_request(self, request, spider):

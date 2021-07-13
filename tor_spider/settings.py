@@ -42,7 +42,7 @@ REDIS_PORT = '6379'
 #seaweedfs
 s_host='172.16.30.24'
 s_port=8888
-IMAGES_STORE =  f'weed://{s_host}:{s_port}/crawler'
+IMAGES_STORE =  f'weed://{s_host}:{s_port}/spider'
 ENABLE_IMAGE_SAVE = True
 IMAGES_EXPIRES = 90
 
