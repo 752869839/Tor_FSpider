@@ -16,6 +16,7 @@ vim /Tor_FSpider/schedule/mapping/extensive_mapping说明.txt  查看mapping说�
 
 #(3)浏览器访问
 你部署ip:5000端口  http://x.x.x.x:5000/       scrapydweb出现代表部署成功
+![image](https://user-images.githubusercontent.com/44913268/125924277-ed599b06-2c7c-46b0-b00c-524ca9e241ac.png)
 
 #(4)浏览器所在桌面下修改相关配置(windows|mac) Tor_FSpider项目
 修改文件  /Tor_FSpider/tor_spider/settings.py   相关配置
