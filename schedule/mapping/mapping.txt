@@ -1,0 +1,28 @@
+                    "url": 网页链接
+                    "status" 网页状态
+                    "net_type": 类型
+                    "domain": 域名
+                    "keywords": 关键字
+                    "description": 描述
+                    "title": 标题
+                    "html": 源码
+                    "content": content文本
+                    "language": 语言
+                    "encode": 网站编码
+	    "significance"  重要性
+                    "category": 分类    (list)
+                    "topic": 主题     (list)
+                    "mirror":  镜像网站    (list)
+                    "phone_number": 手机号   (list)
+                    "qq": QQ号   (list)
+                    "wechat_id": 微信   (list)
+                    "alipay_id": 支付宝   (list)
+                    "card_id": 身份证   (list)
+                    "telegram_id": TG   (list)
+                    "pgp": PGP   (list)
+                    "bitcoin_addresses": 比特币   (list)
+                    "eth_addresses": 以太坊   (list)
+                    "emails": 邮箱
+                    "crawl_time":爬取时间
+                    "gmt_create": 数据存储时间
+                    "gmt_modified": 数据更新时间
