@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import re
+from textrank4zh import TextRank4Keyword, TextRank4Sentence
 
 """Phone"""
 def phone_extract(text):
@@ -217,4 +218,34 @@ def email_extract(content):
     return emails
 
 
+tr4w = TextRank4Keyword()
+def keywords(text):
+    """
+    :param text: 待提取文本信息
+    :return: 返回结果
+    """
+    result = []
+    tr4w.analyze(text=text, lower=True, window=2)
+    for item in tr4w.get_keywords(20, word_min_len=1):
+        # print(item.word, item.weight)  # word关键词 weight权重
+        result.append((item.word))
+    # print(result)
+
+    return result
+
+
+tr4s = TextRank4Sentence()
+def keysentence(text):
+    """
+    :param text: 待提取文本信息
+    :return: 返回结果
+    """
+    tr4s.analyze(text=text, lower=True, source='all_filters')
+    result = ''
+    for item in tr4s.get_key_sentences(num=3):
+        # print(item.index, item.weight, item.sentence)  # index是语句在文本中位置 weight是权重 sentence摘要
+        result +=  item.sentence + ';'
+    # print(result)
+
+    return result
 
