@@ -6,13 +6,14 @@ from lxml import etree
 from multiprocessing import Process
 from elasticsearch.helpers import bulk
 from sim_hash import p_id
-from extract_arithmetic import phone_extract,qq_extract,wechart_extract,alipay_extract,card_extract,tg_extract,pgp_extract,bitcoin_extract,eth_extract,email_extract
+from extract_arithmetic import phone_extract,qq_extract,wechart_extract,alipay_extract,card_extract,tg_extract,pgp_extract,bitcoin_extract,eth_extract,email_extract,keywords,keysentence
 from config import redis_client,es_client
 
 
 
 def data_tran(spider_name):
     n = 0
+    actions = []
     while True:
         time.sleep(0.01)
         try:
@@ -22,8 +23,10 @@ def data_tran(spider_name):
             ele = response.xpath('//script | //noscript | //style')
             for e in ele:
                 e.getparent().remove(e)
+            content = response.xpath("//html//body")[0].xpath("string(.)")
+
             index = 'extensive'
-            action = [{
+            action = {
                 "_index": index,
                 "_id": p_id(redis_data['domain'],
                             htmlmin.minify(redis_data['html'].encode('utf-8').decode('utf-8'), remove_all_empty_space=True)),
@@ -33,11 +36,12 @@ def data_tran(spider_name):
                     "status": redis_data['status'],
                     "net_type": 'onion',
                     "domain": redis_data['domain'],
-                    "keywords": redis_data['keywords'],
                     "description": redis_data['description'],
+                    "keywords": keywords(content),
+                    "abstract": keysentence(content),
                     "title": redis_data['title'],
                     "html": redis_data['html'],
-                    "content": response.xpath("//html//body")[0].xpath("string(.)"),
+                    "content": content,
                     "language": redis_data['language'],
                     "encode": redis_data['encode'],
                     "significance": '',
@@ -46,8 +50,6 @@ def data_tran(spider_name):
                     "mirror": [],
                     "phone_number": phone_extract(response.xpath("//html//body")[0].xpath("string(.)")),
                     "qq": qq_extract(response.xpath("//html//body")[0].xpath("string(.)")),
-                    "wechat_id": wechart_extract(response.xpath("//html//body")[0].xpath("string(.)")),
-                    "alipay_id": alipay_extract(response.xpath("//html//body")[0].xpath("string(.)")),
                     "card_id": card_extract(response.xpath("//html//body")[0].xpath("string(.)")),
                     "telegram_id": tg_extract(response.xpath("//html//body")[0].xpath("string(.)")),
                     "pgp": pgp_extract(response.xpath("//html//body")[0].xpath("string(.)")),
@@ -58,19 +60,23 @@ def data_tran(spider_name):
                     "gmt_create": redis_data['crawl_time'],
                     "gmt_modified": redis_data['crawl_time'],
                 }
-            }]
-            success, _ = bulk(es_client, action, index=index, raise_on_error=True)
+            }
             n += 1
             print(n, redis_data['url'])
+            actions.append(action)
+            if len(actions) == 100:
+                success, _ = bulk(es_client, action, index=index, raise_on_error=True)
+                actions.clear()
+                n = 0
         except Exception as e:
             print(e)
 
 def task_schdule():
     processes = []
-    name = ['onion_tor_whole_spider']
+    name = 'onion_tor_whole_spider'
     spder_name_list = []
     for i in range(32):
-        spder_name_list.extend(name)
+        spder_name_list.append(name)
 
     for i, spider_name in enumerate(spder_name_list):
         process = Process(target=data_tran, args=(spider_name,))
