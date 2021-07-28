@@ -1,1 +1,0 @@
-curl -XPUT "http://172.16.30.68:9200/extensive" -H 'Content-Type: application/json' -d "@./extensive.json"
