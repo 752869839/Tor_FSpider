@@ -6,7 +6,7 @@
 
 #(1)部署服务器(虚拟机)
 上传项目包到目标服务器,系统防火墙需开放5000、6800端口 并安装docker服务
-vim  /Tor_FSpider/docker/scrapyd_monitor.sh     修改相关配置为你部署机器ip
+vim  /Tor_FSpider/scrapyd_monitor.sh     修改相关配置为你部署机器ip
 docker build -t scrapydcloud:latest .           镜像构建时间可能较长耐心等待
 docker run -itd --restart=always --name=scrapydcloud -p 5000:5000 -p 6800:6800  -v /root/data:/root/data -h scrapydcloud -w /code scrapydcloud:latest /bin/bash  运行并启动容器
 外部配置定时任务 crontab -e  配置内容为/Tor_FSpider/docker/crontab.txt中内容
