@@ -23,6 +23,6 @@ MYSQL_DBNAME = 'anwang'
 
 redis_client = StrictRedis(host=R_HOST, port=R_PORT, db=db)
 
-es_client = Elasticsearch(hosts=[f'{E1_HOST},{E2_HOST},{E3_HOST}'], port=E_PORT, timeout=30, max_retries=10)
+es_client = Elasticsearch(hosts=[E1_HOST,E2_HOST,E3_HOST], port=E_PORT, timeout=30, max_retries=10)
 
 mysql_conn = pymysql.connect(host=MYSQL_HOST, user=MYSQL_USER, passwd=MYSQL_PASSWD, db=MYSQL_DBNAME, port=MYSQL_PORT)
