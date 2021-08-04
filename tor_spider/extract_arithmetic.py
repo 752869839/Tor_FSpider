@@ -6,10 +6,11 @@ import re
 """Phone"""
 def phone_extract(text):
     phone_exp = re.compile('(?<!\\d)((?:13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[0135678]|18[0-9]|19[89])\\d{8})(?!\\d)',re.M | re.S | re.I)
-    landline_exp = re.compile(u'(\\(?0\\d{2,4}[-)]\\d{7,8})')
+    # landline_exp = re.compile(u'(\\(?0\\d{2,4}[-)]\\d{7,8})')
     tmp = phone_exp.findall(text)
-    tmp2 = landline_exp.findall(text)
-    return list(set(tmp + tmp2))
+    # tmp2 = landline_exp.findall(text)
+    # return list(set(tmp + tmp2))
+    return list(set(tmp))
 
 
 """QQ"""
@@ -22,7 +23,7 @@ def qq_extract(content):
 """Identity Card"""
 def card_extract(content):
     card_exp = re.compile(
-        r'(?<!\d)(?:(?:([1-9]\d{5}(?:18|19|(?:[23]\d))\d{2}(?:(?:0[1-9])|(?:10|11|12))(?:(?:[0-2][1-9])|10|20|30|31)\d{3}[0-9Xx])(?!\d))|([1-9]\d{5}\d{2}(?:(?:0[1-9])|(?:10|11|12))(?:(?:[0-2][1-9])|10|20|30|31)\d{3}))(?!\d)',
+        r'(?<!\d)(?:(?:([1-9]\d{5}(?:18|19|(?:[23]\d))\d{2}(?:(?:0[1-9])|(?:10|11|12))(?:(?:[0-2][1-9])|10|20|30|31)\d{3}[0-9Xx])(?!\d)))',
         re.M | re.S | re.I)
     identity_card = re.findall(card_exp, content)
     identity_card = list(map(lambda x:''.join(x) ,identity_card))
@@ -41,7 +42,7 @@ def tg_extract(content):
 
 """Wechat"""
 def wechart_extract(content):
-    regex_wx = re.compile(r'(微信|wechat)[,，；;:：\s]*((?:1[3-9]\d{9}|[a-zA-Z\d._-]*\@[a-zA-Z\d.-]{1,10}\.[a-zA-Z\d]{1,20}|[a-zA-Z\d-]{5,20}|[1-9]\d{4,10}))',re.M | re.S | re.I)
+    regex_wx = re.compile(r'(微信)[,，；;:：\s]*((?:1[3-9]\d{9}|[a-zA-Z\d._-]*\@[a-zA-Z\d.-]{1,10}\.[a-zA-Z\d]{1,20}|[a-zA-Z\d-]{5,20}|[1-9]\d{4,10}))',re.M | re.S | re.I)
     wechart = []
     wei = re.search(regex_wx, content)
     try:
@@ -54,7 +55,7 @@ def wechart_extract(content):
 
 """Alipay"""
 def alipay_extract(content):
-    regex_pay = re.compile(r'^(支付宝|zhifubao)[,，；;:：\s]*((?:1[3-9]\d{9}|[a-zA-Z\d._-]*\@[a-zA-Z\d.-]{1,10}\.[a-zA-Z\d]{1,20}))',re.M | re.S |re.I)
+    regex_pay = re.compile(r'^(支付宝)[,，；;:：\s]*((?:1[3-9]\d{9}|[a-zA-Z\d._-]*\@[a-zA-Z\d.-]{1,10}\.[a-zA-Z\d]{1,20}))',re.M | re.S |re.I)
     alipay = []
     pay = re.match(regex_pay, content)
     try:
@@ -74,10 +75,8 @@ def pgp_extract(content):
 
 """IP"""
 def ip_extract(content):
-
     ip_exp = re.compile(r'\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b', re.M | re.S | re.I)
     ips = ip_exp.findall(content)
-
     return list(set(ips))
 
 
@@ -101,6 +100,7 @@ def facebook_extract(content):
     except Exception as e:
         pass
     return facebook
+
 
 """Twitter"""
 def twitter_extract(content):
