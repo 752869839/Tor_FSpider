@@ -3,7 +3,7 @@ from config import redis_client
 
 
 def lpush_url():
-    with open('new_domain.txt', 'r', encoding='utf-8') as f:
+    with open('onion_domain.txt', 'r', encoding='utf-8') as f:
         for domain in f:
             domain = domain.strip()
             if 'onion' in domain:
