@@ -65,11 +65,14 @@ def data_tran(spider_name):
                     "gmt_modified": redis_data['crawl_time'],
                 }
             }
+            # print(json.dumps(action,indent=2))
             n += 1
-            print(n, redis_data['url'])
+            # print(n, redis_data['url'])
+            print(n)
             actions.append(action)
-            if len(actions) == 320:
-                success, _ = bulk(es_client, action, index=index, raise_on_error=False)
+            print(len(actions))
+            if len(actions) == 120:
+                success, _ = bulk(es_client, actions, index=index, raise_on_error=True)
                 print('批量插入成功!')
                 actions.clear()
         except Exception as e:
@@ -79,7 +82,7 @@ def task_schdule():
     processes = []
     name = 'onion_tor_whole_spider'
     spder_name_list = []
-    for i in range(32):
+    for i in range(12):
         spder_name_list.append(name)
 
     for i, spider_name in enumerate(spder_name_list):
