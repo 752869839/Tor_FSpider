@@ -65,6 +65,8 @@ class OnionTorWholeSpider(RedisCrawlSpider):
         for key, value in encoding.items():
             if key == 'encoding' and not value is None:
                 item['encode'] = value
+            else:
+                item['encode'] = ''
 
         item['crawl_time'] = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S")
 
