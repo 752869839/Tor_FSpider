@@ -208,6 +208,9 @@
             }
           }
         },
+        "ip": {
+          "type": "keyword"
+        },
         "emails": {
           "type": "text",
           "analyzer": "email",
