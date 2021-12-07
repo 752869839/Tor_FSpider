@@ -18,6 +18,7 @@ curl -XPUT "http://172.16.30.68:9200/intelligence_cloud" -H 'Content-Type: appli
 "keywords":     网页关键字词    (数组)
 "abstract":     网页文本摘要
 "description":  网页描述
+"ip":           IP              (数组)
 "emails":       邮箱            (数组)
 "qq":           QQ号            (数组)
 "card_id":      身份证          (数组)
