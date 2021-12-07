@@ -227,7 +227,7 @@
           "type": "keyword"
         },
         "pgp": {
-          "type": "text"
+          "type": "keyword"
         },
         "phone_number": {
           "type": "keyword"
