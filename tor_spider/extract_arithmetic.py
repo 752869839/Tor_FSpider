@@ -15,7 +15,7 @@ def phone_extract(text):
 
 """QQ"""
 def qq_extract(content):
-    qq_exp = re.compile('[q扣]{1,2}[:：\s号联系群]*?([1-9][0-9]{4,10}\\b)', re.M | re.S | re.I)
+    qq_exp = re.compile('[q扣]{1,2}[:：\s号联系群]*?([1-9][0-9]{6,10}\\b)', re.M | re.S | re.I)
     qq = re.findall(qq_exp, content)
     return list(set(qq))
 
