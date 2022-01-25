@@ -32,7 +32,7 @@ def card_extract(content):
 
 """TG"""
 def tg_extract(content):
-    tg_exp = re.compile('(?:\\btg|纸飞机|飞机|tg:)[,，:：\s号联系群@]{1,}([\+@a-zA-Z\d_]{5,})', re.M | re.S | re.I)
+    tg_exp = re.compile('(?:\\btg|纸飞机|飞机|tg:|telegram)[,，:：\s号联系群@]{1,}([\+@a-zA-Z\d_]{5,})', re.M | re.S | re.I)
     tg_url_exp = re.compile('(?:http://|https://)(?:t\\.me|telegram\\.me)[a-z0-9-~\\/]*', re.M | re.S | re.I)
     tg_num = tg_exp.findall(content)
     tg_http = tg_url_exp.findall(content)
