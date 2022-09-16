@@ -37,7 +37,7 @@ keyrings.alt==3.0
 langid==1.1.6
 logparser==0.8.2
 lxml==4.6.1
-Mako==1.0.7
+Mako==1.2.2
 MarkupSafe==1.1.1
 networkx==2.5.1
 numpy==1.19.4
