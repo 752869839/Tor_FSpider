@@ -87,5 +87,5 @@ tzlocal==2.1
 urllib3==1.26.2
 w3lib==1.22.0
 webencodings==0.5.1
-Werkzeug==1.0.1
+Werkzeug==2.2.3
 zope.interface==5.2.0
